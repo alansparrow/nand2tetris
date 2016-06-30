@@ -1,0 +1,67 @@
+CHIP Mux8Way {
+    IN a, b, c, d, e, f, g, h, sel[3];
+    OUT out;
+
+    PARTS:
+    // Put your code here:
+    
+    //a
+    Or(a=sel[0], b=sel[1], out=o1);
+    Or(a=sel[2], b=o1, out=o2);
+    Not(in=o2, out=o3);
+    Nand(a=a, b=o3, out=o4);
+
+    //b
+    Not(in=sel[1], out=o5);
+    Not(in=sel[2], out=o6);
+    And(a=o5, b=o6, out=o7);
+    And(a=o7, b=sel[0], out=o8);
+    Nand(a=o8, b=b, out=o9);
+    And(a=o4, b=o9, out=o10);
+
+    //c
+    Not(in=sel[0], out=o11);
+    Not(in=sel[2], out=o12);
+    And(a=o11, b=o12, out=o13);
+    And(a=o13, b=sel[1], out=o14);
+    Nand(a=o14, b=c, out=o15);
+    And(a=o10, b=o15, out=o16);
+
+    //d
+    Not(in=sel[2], out=o17);
+    And(a=sel[0], b=sel[1], out=o18);
+    And(a=o17, b=o18, out=o19);
+    Nand(a=o19, b=d, out=o20);
+    And(a=o16, b=o20, out=o21);
+
+    //e
+    Not(in=sel[0], out=o22);
+    Not(in=sel[1], out=o23);
+    And(a=o22, b=o23, out=o24);
+    And(a=o24, b=sel[2], out=o25);
+    Nand(a=o25, b=e, out=o26);
+    And(a=o21, b=o26, out=o27);
+
+    //f
+    Not(in=sel[1], out=o28);
+    And(a=sel[0], b=sel[2], out=o29);
+    And(a=o28, b=o29, out=o30);
+    Nand(a=o30, b=f, out=o31);
+    And(a=o27, b=o31, out=o32);
+
+
+    //g
+    Not(in=sel[0], out=o33);
+    And(a=sel[1], b=sel[2], out=o34);
+    And(a=o33, b=o34, out=o35);
+    Nand(a=o35, b=g, out=o36);
+    And(a=o32, b=o36, out=o37);
+
+
+    //h 
+    And(a=sel[0], b=sel[1], out=o38);
+    And(a=sel[2], b=o38, out=o39);
+    Nand(a=o39, b=h, out=o40);
+    And(a=o37, b=o40, out=o41);
+    Not(in=o41, out=out);
+}

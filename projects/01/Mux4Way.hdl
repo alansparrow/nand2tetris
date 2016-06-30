@@ -1,0 +1,29 @@
+CHIP Mux4Way {
+    IN a, b, c, d, sel[2];
+    OUT out;
+
+    PARTS:
+    // Put your code here:
+    // a
+    Or(a=sel[0], b=sel[1], out=o1);
+    Not(in=o1, out=o2);
+    Nand(a=o2, b=a, out=o3);
+
+    // b
+    Not(in=sel[1], out=o5);
+    And(a=o5, b=sel[0], out=o6);
+    Nand(a=o6, b=b, out=o7);
+    And(a=o3, b=o7, out=o9); // First And of a and b
+
+    // c
+    Not(in=sel[0], out=o10);
+    And(a=o10, b=sel[1], out=o11);
+    Nand(a=o11, b=c, out=o12);
+    And(a=o9, b=o12, out=o14); // Second And of FirstAnd and c
+
+    // d
+    And(a=sel[0], b=sel[1], out=o15);
+    Nand(a=o15, b=d, out=o16);
+    And(a=o14, b=o16, out=o18);
+    Not(in=o18, out=out); 
+}
