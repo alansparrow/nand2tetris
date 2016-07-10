@@ -17,4 +17,10 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
+
+    Not16(in[0..15]=true, out=oReset);
+    ALU(x=loop1, y=loop1, zx=false, nx=true, zy=true, ny=true, f=true, no=true, zr=tmp, ng=tmp1, out=oPlus1);
+    Mux8Way16(a=loop1, b=oPlus1, c=in, d=in, e=oReset, f=oReset, g=oReset, h=oReset, sel[0]=inc, sel[1]=load, sel[2]=reset, out=o1);
+
+    DFF16(in=o1, out=loop1, out=out);
 }
