@@ -7,3 +7,37 @@
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
 // Put your code here.
+(START)
+    @R2
+    M=0
+    @R0
+    D=M
+    @ZERO
+    D;JEQ
+    @R1
+    D=M
+    @ZERO
+    D;JEQ
+(LOOP)
+    @R0  // First number
+    D=M  // Store it into D
+    @R2  // Result
+    M=M+D  // Result = Result + FirstNumber
+    @R1  // Second Number
+    M=M-1 // Reduce 1
+    D=M
+    @LOOP  // If greater than 0, continue looping
+    D;JGT
+    @END  // else end
+    0;JMP
+      
+(ZERO)
+    @R2
+    M=0
+    @END
+    0;JMP
+(END)
+    @END
+    0;JMP
+    //@START
+    //0;JMP
