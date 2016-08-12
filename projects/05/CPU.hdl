@@ -40,4 +40,81 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+
+    // Instruction: (0.. | 111accccccdddjjj)
+    // Get type of instruction (A or C)
+    Or(a=instruction[15], b=false, out=instructionType);
+
+    // Get x
+    Or(a=instruction[13], b=false, out=x2);
+    Or(a=instruction[14], b=false, out=x1);
+
+
+    // Get j (jump)
+    Or(a=instruction[0], b=false, out=j3);
+    Or(a=instruction[1], b=false, out=j2);
+    Or(a=instruction[2], b=false, out=j1);
+
+    // Get d (dest)
+    Or(a=instruction[3], b=false, out=d3);
+    Or(a=instruction[4], b=false, out=d2);
+    Or(a=instruction[5], b=false, out=d1);
+
+    
+    // Get a (M or AD) (comp: acccccc)
+    Or(a=instruction[12], b=false, out=a);
+
+    // Get c
+    Or(a=instruction[6], b=false, out=c6);
+    Or(a=instruction[7], b=false, out=c5);
+    Or(a=instruction[8], b=false, out=c4);
+    Or(a=instruction[9], b=false, out=c3);
+    Or(a=instruction[10], b=false, out=c2);
+    Or(a=instruction[11], b=false, out=c1);
+
+
+    // For A Register
+    Mux16(a=instruction, b=outMInternal, sel=instructionType, out=outForA);
+    Xor(a=true, b=instructionType, out=cInstruction);
+    Or(a=cInstruction, b=d1, out=shouldStoreA);
+    ARegister(in=outForA, load=shouldStoreA, out=outA, out[0..14]=addressM);
+    
+
+    // For D Register (only load for C Instruction)
+    And(a=d2, b=instructionType, out=shouldLoadD);
+    DRegister(in=outMInternal, load=shouldLoadD, out=outD);
+
+
+    // Get A/M?
+    Mux16(a=outA, b=inM, sel=a, out=outAorM);
+
+    // ALU
+    ALU(x=outD, y=outAorM, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, out=outM, out=outMInternal, zr=outZero, ng=outNegative);
+
+
+    // Conditions to jump (only C Instruction)
+    And(a=j1, b=outNegative, out=cj1);  // Jump if negative
+    And(a=j2, b=outZero, out=cj2);  // Jump if zero
+    
+    Not(in=outZero, out=outZero1);
+    Not(in=outNegative, out=outNegative1);
+    And(a=outZero1, b=outNegative1, out=outPositive);  // notZero && notNegative -> Positive
+    And(a=j3, b=outPositive, out=cj3);  // Jump if positive
+
+    Or(a=cj1, b=cj2, out=cj4);
+    Or(a=cj3, b=cj4, out=cj5);  // Only need 1 condition true
+    And(a=cj5, b=instructionType, out=shouldJump);  // just increase if it is a A Instruction 
+
+
+
+    // PC: Program counter
+    PC(in=outA, load=shouldJump, inc=true, reset=reset, out[0..14]=pc);
+
+
+    // writeM (only C Instruction)
+    And(a=instructionType, b=d3, out=shouldWriteM);
+    Or(a=shouldWriteM, b=false, out=writeM);
+
+
+
 }
