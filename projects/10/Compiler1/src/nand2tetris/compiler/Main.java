@@ -23,7 +23,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		SharedInfo.setup();
-		SharedInfo.SOURCE_PATH = "/Users/baotrungtn/Desktop/nand2tetris/projects/10/ExpressionlessSquare";
+		SharedInfo.SOURCE_PATH = "/Users/baotrungtn/Desktop/nand2tetris/projects/10/Square";
 		File folder = new File(SharedInfo.SOURCE_PATH);
 		File[] listOfFiles = folder.listFiles();
 
@@ -56,6 +56,10 @@ class JackAnalyzer {
 	OutputStreamWriter osw;
 	BufferedWriter bw;
 	
+	File fo1;
+	OutputStream fos1;
+	OutputStreamWriter osw1;
+	BufferedWriter bw1;
 
 
 	
@@ -68,18 +72,32 @@ class JackAnalyzer {
 		fileContent = sc1.useDelimiter("\\Z").next();
 		sc1.close();
 		
-		String outputFilePath = filePath.substring(0, filePath.indexOf(".jack")) + ".xml";
+		String outputFilePath = filePath.substring(0, filePath.indexOf(".jack")) + "T.xml";
 		fo = new File(outputFilePath);
 		fos = new FileOutputStream(fo); // open file for writing result
 		osw = new OutputStreamWriter(fos);
 		bw = new BufferedWriter(osw);
 		
+		outputFilePath = filePath.substring(0, filePath.indexOf(".jack")) + ".xml";
+		fo1 = new File(outputFilePath);
+		fos1 = new FileOutputStream(fo1); // open file for writing result
+		osw1 = new OutputStreamWriter(fos1);
+		bw1 = new BufferedWriter(osw1);
+		
 		JackTokenizer jTokenizer = new JackTokenizer(fileContent);
 		//printXML(jTokenizer);
-		writeXML(jTokenizer);
+		writeSimpleXML(jTokenizer);  // FileT.xml
+		
+		jTokenizer = new JackTokenizer(fileContent);
+		writeFullXML(jTokenizer, bw1);  // File.xml
+		
 		bw.close();
 		osw.close();
 		fos.close();
+		
+		bw1.close();
+		osw1.close();
+		fos1.close();
 		
 	}
 	
@@ -93,7 +111,7 @@ class JackAnalyzer {
 		}
 	}
 	
-	void writeXML(JackTokenizer jTokenizer) throws IOException {
+	void writeSimpleXML(JackTokenizer jTokenizer) throws IOException {
 		bw.write("<tokens>\n");
 		while (jTokenizer.hasMoreToken()) {
 			jTokenizer.advance();
@@ -127,6 +145,11 @@ class JackAnalyzer {
 		bw.write("</tokens>");
 	}
 	
+	void writeFullXML(JackTokenizer jTokenizer, BufferedWriter bw) throws IOException {
+		CompilationEngine ce = new CompilationEngine(jTokenizer, bw);
+		ce.compileClass();
+	}
+	
 	
 }
 
@@ -142,6 +165,7 @@ class JackTokenizer {
 	private KEYWORD keyWord;
 	
 	private TOKEN_TYPE tokenType;
+	private String tokenTypeString;
 	
 	
 	public JackTokenizer(String fileContent) {
@@ -161,11 +185,16 @@ class JackTokenizer {
 		return myScanner.hasNext();
 	}
 	
-	void advance() {
+	boolean hasNextToken(String matchStr) throws IOException {
+		return myScanner.hasNext(matchStr);
+	}
+	
+	String advance() {
 		token = myScanner.next();
 		
 		if (token.equals("\"")) {
 			tokenType = SharedInfo.TOKEN_TYPE.STRING_CONST;
+			tokenTypeString = "stringConstant";
 			stringVal = "";
 			while (myScanner.hasNext()) {  // Get the String Constant
 				String tmp = myScanner.next();
@@ -179,20 +208,29 @@ class JackTokenizer {
 		} else {
 			if (SharedInfo.KEYWORD_LIST.contains(token)) {  // Keyword
 				tokenType = SharedInfo.TOKEN_TYPE.KEYWORD;
+				tokenTypeString = "keyword";
 				keyWord = KEYWORD.valueOf(token.toUpperCase());
 			} else if (SharedInfo.SYMBOL_LIST.contains("\\" + token) || SharedInfo.SYMBOL_LIST.contains(token)) {  // Symbol
 				tokenType = SharedInfo.TOKEN_TYPE.SYMBOL;
+				tokenTypeString = "symbol";
 				symbol = token.charAt(0);
 			} else {
 				if (token.charAt(0) >= '0' && token.charAt(0) <= '9') {  // Number
 					tokenType = SharedInfo.TOKEN_TYPE.INT_CONST;
+					tokenTypeString = "integerConstant";
 					intVal = Integer.valueOf(token);
 				} else {  // Identifier
 					tokenType = SharedInfo.TOKEN_TYPE.IDENTIFIER;
+					tokenTypeString = "identifier";
 					identifier = token;
 				}
 			}
 		}
+		return token;
+	}
+	
+	String tokenTypeString() {
+		return tokenTypeString;
 	}
 	
 	TOKEN_TYPE tokenType() {
@@ -223,10 +261,386 @@ class JackTokenizer {
 
 // Recursive Top-down parser
 class CompilationEngine {
-	public CompilationEngine() {
+	JackTokenizer jTokenizer;
+	BufferedWriter bw;
+	
+	public CompilationEngine(JackTokenizer jTokenizer, BufferedWriter bw) {
+		this.jTokenizer = jTokenizer;
+		this.bw = bw;
+		Utility.setBufferedWriter(bw);
+	}
+	
+	void compileClass() throws IOException {
+		Utility.printNonTerminalOpen("class");
 		
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'class'
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // className
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '{'
+		while (true) {
+			jTokenizer.advance();
+			if (jTokenizer.token.indexOf('}') != -1) {  
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '}'
+				break;
+			} else if (jTokenizer.token.equals("static") || jTokenizer.token.equals("field")) {
+				compileClassVarDec();
+			} else if (jTokenizer.token.equals("constructor") || jTokenizer.token.equals("function") 
+					|| jTokenizer.token.equals("method")) {
+				compileSubroutineDec();
+			} else {
+				Utility.error("Syntax error");
+				break;
+			}
+		}
+		
+		Utility.printNonTerminalClose("class");
+
+	}
+	
+	void compileClassVarDec() throws IOException {
+		
+		Utility.printNonTerminalOpen("classVarDec");
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'static' or 'field'
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // type
+		while (true) {
+			jTokenizer.advance();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // varName
+			jTokenizer.advance();  
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ',' or ';'
+			if (jTokenizer.token.indexOf(';') != -1) {  // , or ; Break if ;
+				break;
+			}
+		}
+		
+		Utility.printNonTerminalClose("classVarDec");
+	
+	}
+	
+	void compileSubroutineDec() throws IOException {
+		Utility.printNonTerminalOpen("subroutineDec");
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'constructor' or 'function' or 'method'
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'void' | type
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // subroutineName
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+		compileParameterList();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')', advance() is done in compileParameterList()
+
+		compileSubroutineBody();
+		
+		Utility.printNonTerminalClose("subroutineDec");
+	}
+	
+	void compileSubroutineBody() throws IOException {
+		Utility.printNonTerminalOpen("subroutineBody");
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '{'
+		
+		while (true) {
+			jTokenizer.advance();
+			if (jTokenizer.token.indexOf('}') != -1) {
+				break;
+			} else if (jTokenizer.token.equals("var")) {  // varDec -> 'var' type varName (',' varName)*';'
+				compileVarDec();
+			} else {  // statements
+				compileStatements();
+				if (jTokenizer.token.indexOf('}') != -1) {  // Last '}' of SubroutineBody
+					break;
+				}
+			}
+		}
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '}'
+		Utility.printNonTerminalClose("subroutineBody");
+	}
+	
+	void compileParameterList() throws IOException {
+		Utility.printNonTerminalOpen("parameterList");
+		
+		while (true) {
+			jTokenizer.advance();
+			if (jTokenizer.token.indexOf(')') != -1) {
+				break;
+			} else if (jTokenizer.token.indexOf(',') != -1) {  // (',' type varName)
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ','
+				jTokenizer.advance();
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // type
+				jTokenizer.advance();
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // varName
+			} else {  // type varName, only use in the beginning
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // type
+				jTokenizer.advance();
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // varName
+			}
+			
+		}
+		
+		Utility.printNonTerminalClose("parameterList");
+	}
+	
+	void compileVarDec() throws IOException {
+		Utility.printNonTerminalOpen("varDec");
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'var'
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // type
+		
+		while (true) {
+			jTokenizer.advance();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // varName
+			jTokenizer.advance();  
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ',' or ';'
+			if (jTokenizer.token.indexOf(';') != -1) {  // , or ; Break if ;
+				break;
+			}
+		}
+		
+		Utility.printNonTerminalClose("varDec");
+	}
+	
+	void compileStatements() throws IOException {
+		Utility.printNonTerminalOpen("statements");
+		
+		while (true) {
+			if (jTokenizer.token.equals("let")) {
+				compileLet();
+			} else if (jTokenizer.token.equals("if")) {
+				compileIf();
+			} else if (jTokenizer.token.equals("while")) {
+				compileWhile();
+			} else if (jTokenizer.token.equals("do")) {
+				compileDo();
+			} else if (jTokenizer.token.equals("return")) {
+				compileReturn();
+			} else {
+				break;  // '}'
+			} 
+			jTokenizer.advance();
+		}
+		 
+		Utility.printNonTerminalClose("statements");
+	}
+	
+	void compileDo() throws IOException {
+		Utility.printNonTerminalOpen("doStatement");
+		
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'do'
+		
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // identifier
+		
+		jTokenizer.advance();
+		if (jTokenizer.token.indexOf('(') != -1) {  // subroutineName '(' expressionList ')'  
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+			compileExpressionList();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')'
+		} else if (jTokenizer.token.indexOf('.') != -1) {  // (className | varName) '.' subroutineName '(' expressionList ')'
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '.'
+			jTokenizer.advance();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // subroutineName
+			jTokenizer.advance();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+			compileExpressionList();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')'
+		} 
+		
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ';'
+		
+		Utility.printNonTerminalClose("doStatement");
+	}
+	
+	void compileLet() throws IOException {
+		Utility.printNonTerminalOpen("letStatement");
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'let'
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // varName
+		jTokenizer.advance();
+		if (jTokenizer.token.indexOf('[') != -1) {  // varName ('[' expression ']')? '=' expression ';'
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '['
+			compileExpression();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ']'
+			
+			jTokenizer.advance();  // get '='
+		} 
+		
+		if (jTokenizer.token.indexOf('=') != -1) {
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '='
+			compileExpression();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ';'
+		}
+		
+		Utility.printNonTerminalClose("letStatement");
+	}
+	
+	void compileWhile() throws IOException {
+		Utility.printNonTerminalOpen("whileStatement");
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'while'
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+		compileExpression();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')'
+		
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '{'
+		jTokenizer.advance();  // ?
+		compileStatements();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '}'
+		
+		Utility.printNonTerminalClose("whileStatement");
+	}
+	
+	
+	void compileIf() throws IOException {
+		Utility.printNonTerminalOpen("ifStatement");
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'if'
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+		compileExpression();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')'
+		
+		jTokenizer.advance();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '{'
+		jTokenizer.advance();  // ?
+		compileStatements();
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '}'
+		
+		if (jTokenizer.hasNextToken("else")) {
+			jTokenizer.advance();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'else'
+			jTokenizer.advance();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '{'
+			jTokenizer.advance();  // ?
+			compileStatements();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '}'
+		}
+		
+		Utility.printNonTerminalClose("ifStatement");
+	}
+	
+	void compileReturn() throws IOException {
+		Utility.printNonTerminalOpen("returnStatement");
+		
+		Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // 'return'
+		
+		if (jTokenizer.hasNextToken("\\;")) {
+			jTokenizer.advance();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ';'
+		} else {
+			compileExpression();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ';'
+		}
+		
+		Utility.printNonTerminalClose("returnStatement");
+	}
+	
+	
+	void compileExpression() throws IOException {
+		Utility.printNonTerminalOpen("expression");
+		
+		compileTerm();
+		
+		while (true) {  // term (op term)*
+			//jTokenizer.advance();
+			if (jTokenizer.token.indexOf(')') != -1  // '(' expression ')'
+					|| jTokenizer.token.indexOf(']') != -1  // '[' expression ']'
+					|| jTokenizer.token.indexOf(',') != -1  // expressionList -> (expression (',' expression)*)?
+					|| jTokenizer.token.indexOf(';') != -1) {  // expression ';'
+				break;
+			} else if (jTokenizer.token.indexOf('+') != -1  
+					|| jTokenizer.token.indexOf('-') != -1  
+					|| jTokenizer.token.indexOf('*') != -1
+					|| jTokenizer.token.indexOf('/') != -1
+					|| jTokenizer.token.indexOf('&') != -1
+					|| jTokenizer.token.indexOf('|') != -1
+					|| jTokenizer.token.indexOf('<') != -1
+					|| jTokenizer.token.indexOf('>') != -1
+					|| jTokenizer.token.indexOf('=') != -1) {  
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // term (op term)* 
+				compileTerm();
+			}
+		}
+		
+		
+		Utility.printNonTerminalClose("expression");
+	}
+	
+	void compileTerm() throws IOException {
+		Utility.printNonTerminalOpen("term");
+		
+		jTokenizer.advance();
+		if (jTokenizer.token.indexOf('(') != -1) {  // '(' expression ')'
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+			compileExpression();
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')'
+			jTokenizer.advance();
+		} else if (jTokenizer.token.indexOf('-') != -1 || jTokenizer.token.indexOf('~') != -1) {
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '-' or '~'
+			compileTerm();
+		} else {  
+			Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // identifier
+			jTokenizer.advance();
+			if (jTokenizer.token.indexOf('[') != -1) {  // varName '[' expression ']'
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '['
+				compileExpression();
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ']'
+				jTokenizer.advance();
+			}
+			// subroutineCall -> subroutineName '(' expressionList ')' | (className | varName) '.' subroutineName '(' expressionList ')'
+			else if (jTokenizer.token.indexOf('(') != -1) {  // subroutineName '(' expressionList ')'  
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+				compileExpressionList();
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')'
+				jTokenizer.advance();
+			} else if (jTokenizer.token.indexOf('.') != -1) {  // (className | varName) '.' subroutineName '(' expressionList ')'
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '.'
+				jTokenizer.advance();
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // subroutineName
+				jTokenizer.advance();
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // '('
+				
+				compileExpressionList();
+				
+				Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // ')'
+				jTokenizer.advance();
+			} 
+		}
+		
+		Utility.printNonTerminalClose("term");
+	}
+	
+	void compileExpressionList() throws IOException {
+		Utility.printNonTerminalOpen("expressionList");
+		
+		if (jTokenizer.hasNextToken("\\)")) {  // ()
+			jTokenizer.advance();
+		} else {
+			while (true) {
+				compileExpression();
+				if (jTokenizer.token.indexOf(')') != -1) {
+					break;
+				} else if (jTokenizer.token.indexOf(',') != -1) {
+					Utility.printTerminal(jTokenizer.tokenTypeString(), jTokenizer.token);  // (expression (',' expression)*)?
+				}
+			}
+		}
+		
+		Utility.printNonTerminalClose("expressionList");
 	}
 }
+
+
 
 class SharedInfo {
 	public static ArrayList<String> SYMBOL_LIST; 
@@ -265,5 +679,39 @@ class SharedInfo {
 		
 		sc1.close();
 		sc2.close();
+	}
+}
+
+class Utility {
+	private static BufferedWriter bw;
+	
+	public static void setBufferedWriter(BufferedWriter bw) {
+		Utility.bw = bw;
+	}
+	
+	public static void error(String msg) {
+		System.out.println(msg);
+	}
+	
+	public static void printTerminal(String tagName, String elementName) throws IOException {
+		System.out.println("<" + tagName + "> " + elementName + " </" + tagName + ">");
+		if (elementName.indexOf("<") != -1) {
+			elementName = "&lt;";
+		} else if (elementName.indexOf(">") != -1) {
+			elementName = "&gt;";
+		} else if (elementName.indexOf("&") != -1) {
+			elementName = "&amp;";
+		} 
+		bw.write("<" + tagName + "> " + elementName + " </" + tagName + ">\n");
+	}
+	
+	public static void printNonTerminalOpen(String tagName) throws IOException {
+		System.out.println("<" + tagName + ">");
+		bw.write("<" + tagName + ">\n");
+	}
+	
+	public static void printNonTerminalClose(String tagName) throws IOException {
+		System.out.println("</" + tagName + ">");
+		bw.write("</" + tagName + ">\n");
 	}
 }
