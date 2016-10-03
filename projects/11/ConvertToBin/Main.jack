@@ -26,7 +26,7 @@ class Main {
      */
     function void main() {
 	var int result, value;
-        
+        do Memory.poke(8000, 7); // added this line, where number is what you want to assign at RAM[8000]
         do Main.fillMemory(8001, 16, -1); // sets RAM[8001]..RAM[8016] to -1
         let value = Memory.peek(8000);    // reads a value from RAM[8000]
 	do Main.convert(value);           // perform the conversion
