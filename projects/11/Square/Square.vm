@@ -74,7 +74,7 @@ lt
 and
 push constant 0
 eq
-if-goto IF_273299749011391
+if-goto IF_276716570946695
 push pointer 0
 call Square.erase 1
 pop temp 1
@@ -85,9 +85,9 @@ pop this 2
 push pointer 0
 call Square.draw 1
 pop temp 1
-goto IF_273299749032630
-label IF_273299749011391
-label IF_273299749032630
+goto IF_276716570974758
+label IF_276716570946695
+label IF_276716570974758
 push constant 0
 return
 function Square.decSize 0
@@ -98,7 +98,7 @@ push constant 2
 gt
 push constant 0
 eq
-if-goto IF_273299762223899
+if-goto IF_276716572920346
 push pointer 0
 call Square.erase 1
 pop temp 1
@@ -109,9 +109,9 @@ pop this 2
 push pointer 0
 call Square.draw 1
 pop temp 1
-goto IF_273299762233695
-label IF_273299762223899
-label IF_273299762233695
+goto IF_276716572927369
+label IF_276716572920346
+label IF_276716572927369
 push constant 0
 return
 function Square.moveUp 0
@@ -122,7 +122,7 @@ push constant 1
 gt
 push constant 0
 eq
-if-goto IF_273299773949658
+if-goto IF_276716573917752
 push constant 0
 call Screen.setColor 1
 pop temp 1
@@ -158,9 +158,9 @@ push constant 1
 add
 call Screen.drawRectangle 4
 pop temp 1
-goto IF_273299773957956
-label IF_273299773949658
-label IF_273299773957956
+goto IF_276716573924761
+label IF_276716573917752
+label IF_276716573924761
 push constant 0
 return
 function Square.moveDown 0
@@ -173,7 +173,7 @@ push constant 254
 lt
 push constant 0
 eq
-if-goto IF_273299785039436
+if-goto IF_276716578220038
 push constant 0
 call Screen.setColor 1
 pop temp 1
@@ -209,9 +209,9 @@ push this 2
 add
 call Screen.drawRectangle 4
 pop temp 1
-goto IF_273299785046857
-label IF_273299785039436
-label IF_273299785046857
+goto IF_276716578227218
+label IF_276716578220038
+label IF_276716578227218
 push constant 0
 return
 function Square.moveLeft 0
@@ -222,7 +222,7 @@ push constant 1
 gt
 push constant 0
 eq
-if-goto IF_273299790730053
+if-goto IF_276716581213791
 push constant 0
 call Screen.setColor 1
 pop temp 1
@@ -258,9 +258,9 @@ push this 2
 add
 call Screen.drawRectangle 4
 pop temp 1
-goto IF_273299790738057
-label IF_273299790730053
-label IF_273299790738057
+goto IF_276716581223875
+label IF_276716581213791
+label IF_276716581223875
 push constant 0
 return
 function Square.moveRight 0
@@ -273,7 +273,7 @@ push constant 510
 lt
 push constant 0
 eq
-if-goto IF_273299801283143
+if-goto IF_276716583598317
 push constant 0
 call Screen.setColor 1
 pop temp 1
@@ -309,8 +309,8 @@ push this 2
 add
 call Screen.drawRectangle 4
 pop temp 1
-goto IF_273299801291016
-label IF_273299801283143
-label IF_273299801291016
+goto IF_276716583605959
+label IF_276716583598317
+label IF_276716583605959
 push constant 0
 return

@@ -419,7 +419,7 @@ push constant 0
 eq
 push constant 0
 eq
-if-goto IF_273324146890406
+if-goto IF_276761626174483
 push local 0
 push constant 10
 call Main.fill 2
@@ -476,9 +476,9 @@ pop temp 2
 pop pointer 1
 push temp 2
 pop that 0
-goto IF_273324146914574
-label IF_273324146890406
-label IF_273324146914574
+goto IF_276761626196550
+label IF_276761626174483
+label IF_276761626196550
 push constant 46
 call String.new 1
 push constant 84
@@ -699,13 +699,13 @@ push constant 2
 call Math.multiply 2
 return
 function Main.fill 0
-label WHILE_273324165582964
+label WHILE_276761636634449
 push argument 1
 push constant 0
 gt
 push constant 0
 eq
-if-goto WHILE_273324165582964_END
+if-goto WHILE_276761636634449_END
 push argument 1
 push constant 1
 sub
@@ -719,7 +719,7 @@ pop temp 2
 pop pointer 1
 push temp 2
 pop that 0
-goto WHILE_273324165582964
-label WHILE_273324165582964_END
+goto WHILE_276761636634449
+label WHILE_276761636634449_END
 push constant 0
 return

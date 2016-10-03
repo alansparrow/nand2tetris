@@ -21,11 +21,11 @@ function Main.convert 3
 push constant 1
 neg
 pop local 2
-label WHILE_273235775709691
+label WHILE_276694911970412
 push local 2
 push constant 0
 eq
-if-goto WHILE_273235775709691_END
+if-goto WHILE_276694911970412_END
 push local 1
 push constant 1
 add
@@ -45,7 +45,7 @@ gt
 not
 push constant 0
 eq
-if-goto IF_273235778308233
+if-goto IF_276694915641480
 push argument 0
 push local 0
 and
@@ -54,29 +54,29 @@ eq
 not
 push constant 0
 eq
-if-goto IF_273235779112825
+if-goto IF_276694916747256
 push constant 8000
 push local 1
 add
 push constant 1
 call Memory.poke 2
 pop temp 1
-goto IF_273235779120025
-label IF_273235779112825
+goto IF_276694916754724
+label IF_276694916747256
 push constant 8000
 push local 1
 add
 push constant 0
 call Memory.poke 2
 pop temp 1
-label IF_273235779120025
-goto IF_273235778315873
-label IF_273235778308233
+label IF_276694916754724
+goto IF_276694915650234
+label IF_276694915641480
 push constant 0
 pop local 2
-label IF_273235778315873
-goto WHILE_273235775709691
-label WHILE_273235775709691_END
+label IF_276694915650234
+goto WHILE_276694911970412
+label WHILE_276694911970412_END
 push constant 0
 return
 function Main.nextMask 0
@@ -85,24 +85,24 @@ push constant 0
 eq
 push constant 0
 eq
-if-goto IF_273235782790899
+if-goto IF_276694923169047
 push constant 1
 return
-goto IF_273235782798164
-label IF_273235782790899
+goto IF_276694923177793
+label IF_276694923169047
 push argument 0
 push constant 2
 call Math.multiply 2
 return
-label IF_273235782798164
+label IF_276694923177793
 function Main.fillMemory 0
-label WHILE_273235784498794
+label WHILE_276694924807230
 push argument 1
 push constant 0
 gt
 push constant 0
 eq
-if-goto WHILE_273235784498794_END
+if-goto WHILE_276694924807230_END
 push argument 0
 push argument 2
 call Memory.poke 2
@@ -115,7 +115,7 @@ push argument 0
 push constant 1
 add
 pop argument 0
-goto WHILE_273235784498794
-label WHILE_273235784498794_END
+goto WHILE_276694924807230
+label WHILE_276694924807230_END
 push constant 0
 return

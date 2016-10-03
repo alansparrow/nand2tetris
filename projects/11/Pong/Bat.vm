@@ -2,57 +2,27 @@ function Bat.new 0
 push constant 5
 call Memory.alloc 1
 pop pointer 0
-push pointer 0
-pop argument 0
 push argument 0
-push constant 0
-add
-pop temp 0
-push argument 0
-push temp 0
-pop pointer 1
-pop that 0
-push argument 0
-push constant 1
-add
-pop temp 0
+pop this 0
 push argument 1
-push temp 0
-pop pointer 1
-pop that 0
-push argument 0
-push constant 2
-add
-pop temp 0
+pop this 1
 push argument 2
-push temp 0
-pop pointer 1
-pop that 0
-push argument 0
-push constant 3
-add
-pop temp 0
+pop this 2
 push argument 3
-push temp 0
-pop pointer 1
-pop that 0
-push argument 0
-push constant 4
-add
-pop temp 0
+pop this 3
 push constant 2
-push temp 0
-pop pointer 1
-pop that 0
+pop this 4
 push pointer 0
 call Bat.show 1
-pop temp 0
+pop temp 1
+push pointer 0
 return
 function Bat.dispose 0
 push argument 0
 pop pointer 0
+push pointer 0
 call Memory.deAlloc 1
-pop temp 0
+pop temp 1
 push constant 0
 return
 function Bat.show 0
@@ -61,10 +31,10 @@ pop pointer 0
 push constant 1
 neg
 call Screen.setColor 1
-pop temp 0
+pop temp 1
 push pointer 0
 call Bat.draw 1
-pop temp 0
+pop temp 1
 push constant 0
 return
 function Bat.hide 0
@@ -72,10 +42,10 @@ push argument 0
 pop pointer 0
 push constant 0
 call Screen.setColor 1
-pop temp 0
+pop temp 1
 push pointer 0
 call Bat.draw 1
-pop temp 0
+pop temp 1
 push constant 0
 return
 function Bat.draw 0
@@ -90,20 +60,14 @@ push this 1
 push this 3
 add
 call Screen.drawRectangle 4
-pop temp 0
+pop temp 1
 push constant 0
 return
 function Bat.setDirection 0
 push argument 0
 pop pointer 0
 push argument 0
-push constant 4
-add
-pop temp 0
-push argument 0
-push temp 0
-pop pointer 1
-pop that 0
+pop this 4
 push constant 0
 return
 function Bat.getLeft 0
@@ -123,18 +87,12 @@ push argument 0
 pop pointer 0
 push pointer 0
 call Bat.hide 1
-pop temp 0
+pop temp 1
 push argument 0
-push constant 2
-add
-pop temp 0
-push argument 0
-push temp 0
-pop pointer 1
-pop that 0
+pop this 2
 push pointer 0
 call Bat.show 1
-pop temp 0
+pop temp 1
 push constant 0
 return
 function Bat.move 0
@@ -145,37 +103,25 @@ push constant 1
 eq
 push constant 0
 eq
-if-goto IF_105610848513201
-push argument 0
-push constant 0
-add
-pop temp 0
+if-goto IF_276776859849889
 push this 0
 push constant 4
 sub
-push temp 0
-pop pointer 1
-pop that 0
+pop this 0
 push this 0
 push constant 0
 lt
 push constant 0
 eq
-if-goto IF_105610848897069
-push argument 0
+if-goto IF_276776860310063
 push constant 0
-add
-pop temp 0
-push constant 0
-push temp 0
-pop pointer 1
-pop that 0
-goto IF_105610848907163
-label IF_105610848897069
-label IF_105610848907163
+pop this 0
+goto IF_276776860317424
+label IF_276776860310063
+label IF_276776860317424
 push constant 0
 call Screen.setColor 1
-pop temp 0
+pop temp 1
 push this 0
 push this 2
 add
@@ -191,11 +137,11 @@ push this 1
 push this 3
 add
 call Screen.drawRectangle 4
-pop temp 0
+pop temp 1
 push constant 1
 neg
 call Screen.setColor 1
-pop temp 0
+pop temp 1
 push this 0
 push this 1
 push this 0
@@ -205,19 +151,13 @@ push this 1
 push this 3
 add
 call Screen.drawRectangle 4
-pop temp 0
-goto IF_105610848525121
-label IF_105610848513201
-push argument 0
-push constant 0
-add
-pop temp 0
+pop temp 1
+goto IF_276776859858944
+label IF_276776859849889
 push this 0
 push constant 4
 add
-push temp 0
-pop pointer 1
-pop that 0
+pop this 0
 push this 0
 push this 2
 add
@@ -225,23 +165,17 @@ push constant 511
 gt
 push constant 0
 eq
-if-goto IF_105610855164456
-push argument 0
-push constant 0
-add
-pop temp 0
+if-goto IF_276776862635022
 push constant 511
 push this 2
 sub
-push temp 0
-pop pointer 1
-pop that 0
-goto IF_105610855175172
-label IF_105610855164456
-label IF_105610855175172
+pop this 0
+goto IF_276776862644485
+label IF_276776862635022
+label IF_276776862644485
 push constant 0
 call Screen.setColor 1
-pop temp 0
+pop temp 1
 push this 0
 push constant 4
 sub
@@ -253,11 +187,11 @@ push this 1
 push this 3
 add
 call Screen.drawRectangle 4
-pop temp 0
+pop temp 1
 push constant 1
 neg
 call Screen.setColor 1
-pop temp 0
+pop temp 1
 push this 0
 push this 2
 add
@@ -271,7 +205,7 @@ push this 1
 push this 3
 add
 call Screen.drawRectangle 4
-pop temp 0
-label IF_105610848525121
+pop temp 1
+label IF_276776859858944
 push constant 0
 return

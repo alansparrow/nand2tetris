@@ -44,13 +44,13 @@ call Array.new 1
 pop local 0
 push constant 0
 pop local 2
-label WHILE_273110726366552
+label WHILE_276745536429562
 push local 2
 push local 1
 lt
 push constant 0
 eq
-if-goto WHILE_273110726366552_END
+if-goto WHILE_276745536429562_END
 push local 2
 push local 0
 add
@@ -111,19 +111,19 @@ push local 2
 push constant 1
 add
 pop local 2
-goto WHILE_273110726366552
-label WHILE_273110726366552_END
+goto WHILE_276745536429562
+label WHILE_276745536429562_END
 push constant 0
 pop local 2
 push constant 0
 pop local 3
-label WHILE_273110730587679
+label WHILE_276745541556274
 push local 2
 push local 1
 lt
 push constant 0
 eq
-if-goto WHILE_273110730587679_END
+if-goto WHILE_276745541556274_END
 push local 3
 push local 2
 push local 0
@@ -136,8 +136,8 @@ push local 2
 push constant 1
 add
 pop local 2
-goto WHILE_273110730587679
-label WHILE_273110730587679_END
+goto WHILE_276745541556274
+label WHILE_276745541556274_END
 push constant 16
 call String.new 1
 push constant 84

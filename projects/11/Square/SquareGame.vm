@@ -27,123 +27,123 @@ push argument 0
 pop pointer 0
 push constant 0
 pop local 1
-label WHILE_273299816458065
+label WHILE_276716619239144
 push local 1
 not
 push constant 0
 eq
-if-goto WHILE_273299816458065_END
-label WHILE_273299816755364
+if-goto WHILE_276716619239144_END
+label WHILE_276716619949710
 push local 0
 push constant 0
 eq
 push constant 0
 eq
-if-goto WHILE_273299816755364_END
+if-goto WHILE_276716619949710_END
 call Keyboard.keyPressed 0
 pop local 0
 push pointer 0
 call SquareGame.moveSquare 1
 pop temp 1
-goto WHILE_273299816755364
-label WHILE_273299816755364_END
+goto WHILE_276716619949710
+label WHILE_276716619949710_END
 push local 0
 push constant 81
 eq
 push constant 0
 eq
-if-goto IF_273299817290853
+if-goto IF_276716628192948
 push constant 1
 neg
 pop local 1
-goto IF_273299817299017
-label IF_273299817290853
-label IF_273299817299017
+goto IF_276716628210966
+label IF_276716628192948
+label IF_276716628210966
 push local 0
 push constant 90
 eq
 push constant 0
 eq
-if-goto IF_273299817652207
+if-goto IF_276716628660376
 push this 0
 call Square.decSize 1
 pop temp 1
-goto IF_273299817658015
-label IF_273299817652207
-label IF_273299817658015
+goto IF_276716628667198
+label IF_276716628660376
+label IF_276716628667198
 push local 0
 push constant 88
 eq
 push constant 0
 eq
-if-goto IF_273299818000555
+if-goto IF_276716629538308
 push this 0
 call Square.incSize 1
 pop temp 1
-goto IF_273299818005415
-label IF_273299818000555
-label IF_273299818005415
+goto IF_276716629546939
+label IF_276716629538308
+label IF_276716629546939
 push local 0
 push constant 131
 eq
 push constant 0
 eq
-if-goto IF_273299818384196
+if-goto IF_276716631184310
 push constant 1
 pop this 1
-goto IF_273299818389215
-label IF_273299818384196
-label IF_273299818389215
+goto IF_276716631193578
+label IF_276716631184310
+label IF_276716631193578
 push local 0
 push constant 133
 eq
 push constant 0
 eq
-if-goto IF_273299818712083
+if-goto IF_276716633131676
 push constant 2
 pop this 1
-goto IF_273299818720971
-label IF_273299818712083
-label IF_273299818720971
+goto IF_276716633145507
+label IF_276716633131676
+label IF_276716633145507
 push local 0
 push constant 130
 eq
 push constant 0
 eq
-if-goto IF_273299819039012
+if-goto IF_276716637404758
 push constant 3
 pop this 1
-goto IF_273299819043972
-label IF_273299819039012
-label IF_273299819043972
+goto IF_276716637416760
+label IF_276716637404758
+label IF_276716637416760
 push local 0
 push constant 132
 eq
 push constant 0
 eq
-if-goto IF_273299819414628
+if-goto IF_276716639215950
 push constant 4
 pop this 1
-goto IF_273299819419834
-label IF_273299819414628
-label IF_273299819419834
-label WHILE_273299819777875
+goto IF_276716639225183
+label IF_276716639215950
+label IF_276716639225183
+label WHILE_276716646224530
 push local 0
 push constant 0
 eq
 not
 push constant 0
 eq
-if-goto WHILE_273299819777875_END
+if-goto WHILE_276716646224530_END
 call Keyboard.keyPressed 0
 pop local 0
 push pointer 0
 call SquareGame.moveSquare 1
 pop temp 1
-goto WHILE_273299819777875
-label WHILE_273299819777875_END
-goto WHILE_273299816458065
-label WHILE_273299816458065_END
+goto WHILE_276716646224530
+label WHILE_276716646224530_END
+goto WHILE_276716619239144
+label WHILE_276716619239144_END
 push constant 0
 return
 function SquareGame.moveSquare 0
@@ -154,49 +154,49 @@ push constant 1
 eq
 push constant 0
 eq
-if-goto IF_273299821289555
+if-goto IF_276716676128469
 push this 0
 call Square.moveUp 1
 pop temp 1
-goto IF_273299821297432
-label IF_273299821289555
-label IF_273299821297432
+goto IF_276716676136974
+label IF_276716676128469
+label IF_276716676136974
 push this 1
 push constant 2
 eq
 push constant 0
 eq
-if-goto IF_273299821977697
+if-goto IF_276716676470086
 push this 0
 call Square.moveDown 1
 pop temp 1
-goto IF_273299821984810
-label IF_273299821977697
-label IF_273299821984810
+goto IF_276716676477122
+label IF_276716676470086
+label IF_276716676477122
 push this 1
 push constant 3
 eq
 push constant 0
 eq
-if-goto IF_273299822712086
+if-goto IF_276716676752882
 push this 0
 call Square.moveLeft 1
 pop temp 1
-goto IF_273299822719645
-label IF_273299822712086
-label IF_273299822719645
+goto IF_276716676758904
+label IF_276716676752882
+label IF_276716676758904
 push this 1
 push constant 4
 eq
 push constant 0
 eq
-if-goto IF_273299824126765
+if-goto IF_276716677013458
 push this 0
 call Square.moveRight 1
 pop temp 1
-goto IF_273299824134347
-label IF_273299824126765
-label IF_273299824134347
+goto IF_276716677018941
+label IF_276716677013458
+label IF_276716677018941
 push constant 5
 call Sys.wait 1
 pop temp 1
